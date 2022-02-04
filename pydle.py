@@ -122,7 +122,7 @@ def input_callback(*args):
 	# Clear the text box. Must be after finished with word_var
 	word_entry.delete(0, END)
 
-############################# MAIN GAME ##################################
+############################# GUI ##################################
 
 # Make the game gui.
 root = tkinter.Tk()
