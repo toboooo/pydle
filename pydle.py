@@ -52,8 +52,6 @@ start_date = datetime.datetime(2021, 6, 19)
 date_difference = datetime.datetime.now() - start_date
 answer_word = dicts[0][date_difference.days]
 
-answer_word = 'treat'
-
 # Initialise the number of attempts
 attempt = 0
 
