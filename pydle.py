@@ -52,7 +52,7 @@ start_date = datetime.datetime(2021, 6, 19)
 date_difference = datetime.datetime.now() - start_date
 answer_word = dicts[0][date_difference.days]
 
-answer_word = 'treat'
+answer_word = 'sassy'
 
 # Initialise the number of attempts
 attempt = 0
@@ -63,9 +63,6 @@ attempt = 0
 def input_callback(*args):
 	global attempt
 	global letters
-	# A counter to make sure the correct number of letters are colored orange
-	# for when the answer has duplicate letters
-	color_count = 0
 	
 	# Check if number of allowed attempts has been reached
 	if attempt <= 5:
@@ -78,10 +75,13 @@ def input_callback(*args):
 				# Change the letter colors
 				# Make the letter orange if it appears in the answer
 				if letter in answer_word:
-					# Do not color orange if the letter appears only once in
-					# the answer and has already been seen in the attempt word
-					if word_var.get()[index:].lower().count(letter) <= answer_word[index:].count(letter):
-						word_attempts[attempt][index].config(foreground='#eba21a')
+					# Do not color the letter orange if the letter has already
+					# been seen in the attempt word as many times as it appears
+					# in the answer
+					letter_count_so_far = word_var.get()[:index+1].lower().count(letter)
+					answer_count = answer_word.count(letter)
+					if letter_count_so_far <= answer_count:
+						word_attempts[attempt][index].config(foreground='#eba21a')					
 				# Make the letter green if it is in the correct place
 				if letter == answer_word[index]:
 					word_attempts[attempt][index].config(foreground='#5ceb1a')
