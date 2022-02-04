@@ -1,10 +1,11 @@
-import tkinter
 import datetime
 import csv
 import pickle
 from tkinter import ttk
 from tkinter import *
 
+
+###############################################################
 
 # Load in stats, create the stats dictionary if no file
 try:
@@ -16,7 +17,7 @@ except FileNotFoundError:
 			'played_today': False, '1_attempt': 0, '2_attempt': 0, 
 			'3_attempt': 0, '4_attempt': 0,	'5_attempt': 0, '6_attempt': 0, 
 			'n_attempts': 0, 'mean': 0, 'std_dev': 0, 'max': 0, 'min': 6, 
-			'streak': 0, 'max_streak': 0}
+			'streak': 1, 'max_streak': 0}
 
 # Set played_today to False if playing on new day
 if stats['played_today'] == True:
@@ -26,14 +27,16 @@ if stats['played_today'] == True:
 # Increment the total number of plays if not played today
 if stats['played_today'] == False:
 	stats['n_plays'] += 1
-	# Also increment the current streak
-	stats['streak'] += 1
+	# Also increment the current streak, if played yesterday
+	if (datetime.datetime.now().date() - stats['last_date_played']).days == 1:
+		stats['streak'] += 1
 	# change the max streak if exceeded
 	if stats['streak'] > stats['max_streak']:
 		stats['max_streak'] = stats['streak']
 	# reset played today
 	stats['played_today'] = True
 
+###############################################################
 
 # Get the word dictionaries.
 with open('wordle_dicts.csv') as f:
@@ -48,15 +51,7 @@ answer_word = dicts[0][date_difference.days]
 # Initialise the number of attempts
 attempt = 0
 
-# Make the game gui.
-root = tkinter.Tk()
-root.title('Wordle in Python')
-
-# Create frame widget to hold GUI contents.
-main_frame = ttk.Frame(root, padding="3 3 12 12")
-main_frame.grid(column=0, row=0, sticky=(N,W,E,S))
-root.columnconfigure(0, weight=1)
-root.rowconfigure(0, weight=1)
+###############################################################
 
 # Callback function bound to the return key.
 def input_callback(*args):
@@ -88,6 +83,18 @@ def input_callback(*args):
 
 	# Clear the text box. Must be after finished with word_var
 	word_entry.delete(0, END)
+
+###############################################################
+
+# Make the game gui.
+root = tkinter.Tk()
+root.title('Wordle in Python')
+
+# Create frame widget to hold GUI contents.
+main_frame = ttk.Frame(root, padding="3 3 12 12")
+main_frame.grid(column=0, row=0, sticky=(N,W,E,S))
+root.columnconfigure(0, weight=1)
+root.rowconfigure(0, weight=1)
 
 # Create a separate frame for the input box and letter tracking.
 input_frame = ttk.Frame(main_frame)
