@@ -122,7 +122,7 @@ def input_callback(*args):
 	# Clear the text box. Must be after finished with word_var
 	word_entry.delete(0, END)
 
-############################# GUI ##################################
+############################# MAIN GAME ##################################
 
 # Make the game gui.
 root = tkinter.Tk()
@@ -164,6 +164,21 @@ for i in range(6):
 # Some formatting.
 for child in main_frame.winfo_children():
 	child.grid_configure(padx=5, pady=5)
+
+
+# Create the popup window for stats
+def popup_window():
+	stats_window = tkinter.Toplevel()
+	stats_text = f"Number of plays: {stats['n_plays']}\nCurrent streak: {stats['streak']}\nMax streak: {stats['max_streak']}\nMax attempts: {stats['max']}\nMin attempts: {stats['min']}\n\nMean: {stats['mean']}\nStandard deviation: {stats['std_dev']}\n\nAttempt distribution\n1 attempt: {int(stats['attempt_distribution'][0]/sum(stats['attempt_distribution'])*100) if sum(stats['attempt_distribution'])!=0 else 0}%\n2 attempts: {int(stats['attempt_distribution'][1]/sum(stats['attempt_distribution'])*100) if sum(stats['attempt_distribution'])!=0 else 0}%\n3 attempts: {int(stats['attempt_distribution'][2]/sum(stats['attempt_distribution'])*100) if sum(stats['attempt_distribution'])!=0 else 0}%\n4 attempts: {int(stats['attempt_distribution'][3]/sum(stats['attempt_distribution'])*100) if sum(stats['attempt_distribution'])!=0 else 0}%\n5 attempts: {int(stats['attempt_distribution'][4]/sum(stats['attempt_distribution'])*100) if sum(stats['attempt_distribution'])!=0 else 0}%\n6 attempts: {int(stats['attempt_distribution'][5]/sum(stats['attempt_distribution'])*100) if sum(stats['attempt_distribution'])!=0 else 0}%\n"
+	stats_label = ttk.Label(stats_window, font=('Arial 12'), text=stats_text)
+	stats_label.grid(column=0, row=2)
+	# Pad everything in the stats window
+	for child in stats_window.winfo_children():
+		child.grid_configure(padx=5, pady=5)
+
+# The button to show stats
+stats_button = ttk.Button(input_frame, text='Stats', command=popup_window)
+stats_button.grid(column=2, row=9)
 
 root.bind('<Return>', input_callback)
 root.mainloop()
