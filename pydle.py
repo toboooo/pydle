@@ -52,6 +52,8 @@ start_date = datetime.datetime(2021, 6, 19)
 date_difference = datetime.datetime.now() - start_date
 answer_word = dicts[0][date_difference.days]
 
+answer_word = 'treat'
+
 # Initialise the number of attempts
 attempt = 0
 
@@ -67,7 +69,7 @@ def input_callback(*args):
 		# Check if the input word is allowed
 		if (word_var.get().lower() in dicts[0]) or (word_var.get().lower() in dicts[1]):
 			# Loop through the letters in the word
-			for index, letter in enumerate(word_var.get()):
+			for index, letter in enumerate(word_var.get().lower()):
 				# Change the Label object for the current letter
 				word_attempts[attempt][index].config(text=letter.upper())
 				# Change the letter colors
@@ -79,7 +81,17 @@ def input_callback(*args):
 					letter_count_so_far = word_var.get()[:index+1].lower().count(letter)
 					answer_count = answer_word.count(letter)
 					if letter_count_so_far <= answer_count:
-						word_attempts[attempt][index].config(foreground='#eba21a')					
+						# Also do not color orange if the letters appears more
+						# than once in the input and the same letter in the 
+						# input is green further along in the word
+						color_orange_flag = True
+						for input_l, attempt_l in zip(word_var.get()[index+1:].lower(), answer_word[index+1:]):
+							if input_l == attempt_l:
+								color_orange_flag = False
+						if word_var.get().lower().count(letter) > 1 and color_orange_flag == False:
+							pass
+						else:
+							word_attempts[attempt][index].config(foreground='#eba21a')					
 				# Make the letter green if it is in the correct place
 				if letter == answer_word[index]:
 					word_attempts[attempt][index].config(foreground='#5ceb1a')
