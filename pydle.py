@@ -1,3 +1,4 @@
+import tkinter
 import datetime
 import csv
 import pickle
@@ -5,7 +6,7 @@ from tkinter import ttk
 from tkinter import *
 
 
-###############################################################
+############################# STATS ##################################
 
 # Load in stats, create the stats dictionary if no file
 try:
@@ -14,10 +15,9 @@ try:
 	stats_file.close()
 except FileNotFoundError:
 	stats = {'n_plays': 0, 'last_date_played': datetime.datetime.now().date(),
-			'played_today': False, '1_attempt': 0, '2_attempt': 0, 
-			'3_attempt': 0, '4_attempt': 0,	'5_attempt': 0, '6_attempt': 0, 
-			'n_attempts': 0, 'mean': 0, 'std_dev': 0, 'max': 0, 'min': 6, 
-			'streak': 1, 'max_streak': 0}
+			'played_today': False, 'attempt_distribution': [0,0,0,0,0,0],
+			'sum_attempts': 0, 'sum_attempts_squared': 0, 'mean': 0, 
+			'std_dev': 0, 'max': 1, 'min': 6, 'streak': 1, 'max_streak': 1}
 
 # Set played_today to False if playing on new day
 if stats['played_today'] == True:
@@ -30,13 +30,17 @@ if stats['played_today'] == False:
 	# Also increment the current streak, if played yesterday
 	if (datetime.datetime.now().date() - stats['last_date_played']).days == 1:
 		stats['streak'] += 1
-	# change the max streak if exceeded
+	# Reset the streak if not played yesterday
+	elif (datetime.datetime.now().date() - stats['last_date_played']).days > 1:
+		stats['streak'] = 1
+	# change max_streak if current streak exceeds it
 	if stats['streak'] > stats['max_streak']:
 		stats['max_streak'] = stats['streak']
-	# reset played today
-	stats['played_today'] = True
 
-###############################################################
+# Set the date played to today
+stats['last_date_played'] = datetime.datetime.now().date()
+
+############################# WORDS ##################################
 
 # Get the word dictionaries.
 with open('wordle_dicts.csv') as f:
@@ -51,12 +55,13 @@ answer_word = dicts[0][date_difference.days]
 # Initialise the number of attempts
 attempt = 0
 
-###############################################################
+############################ CALLBACK ###################################
 
 # Callback function bound to the return key.
 def input_callback(*args):
 	global attempt
 	global letters
+	
 	# Check if number of allowed attempts has been reached
 	if attempt <= 5:
 		# Check if the input word is allowed
@@ -81,10 +86,37 @@ def input_callback(*args):
 			untried_letters.config(text=letters)
 			attempt += 1
 
+	# Collect stats if the correct word has been found, or run out of attempts
+	if (attempt > 5) or (word_var.get().lower() == answer_word):
+		# Only update stats if not played today
+		if stats['played_today'] == False:
+			# Update to played today
+			stats['played_today'] = True
+			# Add to the total number of attempts and attempts squared
+			stats['sum_attempts'] += attempt
+			stats['sum_attempts_squared'] += attempt**2
+			# The mean number of attempts per word is given by the total number
+			# of attempts divided by the total number of plays
+			stats['mean'] = stats['sum_attempts']/stats['n_plays']
+			# The standard deviation is given by the expected value of the number
+			# of attempts squared, subtract the mean squared
+			stats['std_dev'] = (stats['sum_attempts_squared']/stats['n_plays']) - stats['mean']**2
+			# Update the distribution of the numbers of attempts
+			stats['attempt_distribution'][attempt-1] += 1
+			# Update max and min numbers of attempts
+			if attempt > stats['max']:
+				stats['max'] = attempt
+			if attempt < stats['min']:
+				stats['min'] = attempt
+
+			# Pickle the stats
+			stats_file = open('pydle_stats.pkl', 'wb')
+			pickle.dump(stats, stats_file)
+
 	# Clear the text box. Must be after finished with word_var
 	word_entry.delete(0, END)
 
-###############################################################
+############################# GUI ##################################
 
 # Make the game gui.
 root = tkinter.Tk()
