@@ -77,6 +77,7 @@ def input_callback(*args):
 					# been seen in the attempt word as many times as it appears
 					# in the answer
 					letter_count_so_far = word_var.get()[:index+1].lower().count(letter)
+					input_letter_count = word_var.get().lower().count(letter)
 					answer_count = answer_word.count(letter)
 					if letter_count_so_far <= answer_count:
 						# Also do not color orange if the letters appears more
@@ -84,7 +85,7 @@ def input_callback(*args):
 						# input is green further along in the word
 						color_orange_flag = True
 						for input_l, attempt_l in zip(word_var.get()[index+1:].lower(), answer_word[index+1:]):
-							if input_l == attempt_l:
+							if input_l == attempt_l and input_letter_count < answer_count:
 								color_orange_flag = False
 						if word_var.get().lower().count(letter) > 1 and color_orange_flag == False:
 							pass
