@@ -85,7 +85,7 @@ def input_callback(*args):
 						# input is green further along in the word
 						color_orange_flag = True
 						for input_l, attempt_l in zip(word_var.get()[index+1:].lower(), answer_word[index+1:]):
-							if input_l == attempt_l and input_letter_count < answer_count:
+							if input_l == attempt_l and input_letter_count-letter_count_so_far <= answer_count:
 								color_orange_flag = False
 						if word_var.get().lower().count(letter) > 1 and color_orange_flag == False:
 							pass
