@@ -110,6 +110,10 @@ def reset_game():
 	answer_word = random.choice(answers)
 	# Reset number of attempts
 	attempt = 0
+
+	# Destroy all current widgets
+	for child in root.winfo_children():
+		child.destroy()
 	
 	# Create frame widget to hold GUI contents.
 	main_frame = ttk.Frame(root, padding="3 3 12 12")
