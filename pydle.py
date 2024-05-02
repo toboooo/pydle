@@ -118,21 +118,25 @@ def reset_game():
 	# Create frame widget to hold GUI contents.
 	main_frame = ttk.Frame(root, padding="3 3 12 12")
 	main_frame.grid(column=0, row=0, sticky=(N,W,E,S))
+	main_frame.grid_columnconfigure(0, weight=1)
 	root.columnconfigure(0, weight=1)
 	root.rowconfigure(0, weight=1)
 
 	# Create a separate frame for the input box and letter tracking.
 	input_frame = ttk.Frame(main_frame)
 	input_frame.grid(column=0, row=1)
+	input_frame.grid_columnconfigure(0, weight=1)
 	# Make the entry text box.
 	word_var = StringVar()
 	word_entry = ttk.Entry(input_frame, font=("Arial 30"), width=6, textvariable=word_var)
 	word_entry.grid(column=2, row=7)
+	word_entry.grid_columnconfigure(2, weight=1)
 
 	# Make a widget for the list of letters.
 	letters = "Q W E R T Y U I O P\n  A S D F G H J K L\n    Z X C V B N M"
 	untried_letters = ttk.Label(input_frame, font=("Arial 22"), text=letters)
 	untried_letters.grid(column=2, row=8)
+	untried_letters.grid_columnconfigure(2, weight=1)
 
 	# Create a new frame for the letters.
 	words_frame = ttk.Frame(main_frame)
@@ -196,21 +200,25 @@ if __name__ == "__main__":
 	# Create frame widget to hold GUI contents.
 	main_frame = ttk.Frame(root, padding="3 3 12 12")
 	main_frame.grid(column=0, row=0, sticky=(N,W,E,S))
+	main_frame.grid_columnconfigure(0, weight=1)
 	root.columnconfigure(0, weight=1)
 	root.rowconfigure(0, weight=1)
 
 	# Create a separate frame for the input box and letter tracking.
 	input_frame = ttk.Frame(main_frame)
 	input_frame.grid(column=0, row=1)
+	input_frame.grid_columnconfigure(0, weight=1)
 	# Make the entry text box.
 	word_var = StringVar()
 	word_entry = ttk.Entry(input_frame, font=("Arial 30"), width=6, textvariable=word_var)
 	word_entry.grid(column=2, row=7)
+	word_entry.grid_columnconfigure(2, weight=1)
 
 	# Make a widget for the list of letters.
 	letters = "Q W E R T Y U I O P\n  A S D F G H J K L\n    Z X C V B N M"
 	untried_letters = ttk.Label(input_frame, font=("Arial 22"), text=letters)
 	untried_letters.grid(column=2, row=8)
+	untried_letters.grid_columnconfigure(2, weight=1)
 
 	# Create a new frame for the letters.
 	words_frame = ttk.Frame(main_frame)
@@ -237,6 +245,12 @@ if __name__ == "__main__":
 	# The button to show stats.
 	stats_button = ttk.Button(input_frame, text="Stats", command=popup_window)
 	stats_button.grid(column=2, row=10)
+
+	# Get the window's current dimensions and set the minimum size to those
+	root.update()
+	width = root.winfo_width()
+	height = root.winfo_height()
+	root.minsize(width=width, height=height)
 
 	root.bind("<Return>", input_callback)
 	root.mainloop()
