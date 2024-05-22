@@ -113,6 +113,8 @@ def reset_game():
 
 	# Destroy all current widgets
 	for child in root.winfo_children():
+		for subchild in child.winfo_children():
+			subchild.destroy()
 		child.destroy()
 	
 	# Create frame widget to hold GUI contents.
